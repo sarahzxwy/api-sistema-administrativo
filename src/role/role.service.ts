@@ -54,6 +54,15 @@ export class RoleService {
   }
 
   async remove(id: number) {
+    const roleWithUsers = await this.prisma.role.findUnique({
+      where: { id },
+      include: { users: true },
+    });
+
+    if (roleWithUsers && roleWithUsers.users.length > 0) {
+      throw new Error('Não é possível deletar um cargo que possui usuários associados.');
+    }
+
     return this.prisma.role.delete({ where: { id } });
   }
 }
