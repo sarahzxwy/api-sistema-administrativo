@@ -1,34 +1,51 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Request} from '@nestjs/common';
+import { Prisma, User, User as UserModel } from '@prisma/client';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+    constructor(private userService: UserService){}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
-  }
+    @Post(':roleId')
+    async signupUser(
+        @Body() userData: CreateUserDto,
+        @Request() req: any,
+        @Param('roleId') roleId: string
+    ): Promise<UserModel> {
+      return this.userService.createUser(
+      userData, Number(roleId)
+    );
+    }
 
-  @Get()
-  findAll() {
-    return this.userService.findAll();
-  }
+    @Get('user')
+    async getUsers(): Promise<UserModel[]> {
+        return this.userService.findAll();
+    }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
-  }
+    @Get(':id')
+    async findOne(@Param('id') id: string) {
+      return this.userService.findOne(Number(id));
+    }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
-  }
+    @Patch(':id')
+    async updateUser(
+      @Body() updateUserDto: UpdateUserDto,
+      @Param('id') id: string,
+    ) {
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
-  }
+      const { roleId, ...userData } = updateUserDto;
+      return this.userService.updateUser( Number(id), {
+        ...userData,
+        ...(roleId && { role: { connect: { id: roleId } } }),
+      });
+    }
+
+  
+    @Delete(':id')
+    async deleteUser(@Param('id') id: string): Promise<UserModel> {
+        return this.userService.deleteUser({ id: Number(id) });
+    }
 }
+
