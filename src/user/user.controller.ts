@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Request} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Request, ValidationPipe} from '@nestjs/common';
 import { Prisma, User, User as UserModel } from '@prisma/client';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -10,7 +10,7 @@ export class UserController {
 
     @Post(':roleId')
     async signupUser(
-        @Body() userData: CreateUserDto,
+        @Body(new ValidationPipe()) userData: CreateUserDto,
         @Request() req: any,
         @Param('roleId') roleId: string
     ): Promise<UserModel> {
@@ -31,7 +31,7 @@ export class UserController {
 
     @Patch(':id')
     async updateUser(
-      @Body() updateUserDto: UpdateUserDto,
+      @Body(new ValidationPipe()) updateUserDto: UpdateUserDto,
       @Param('id') id: string,
     ) {
 
