@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, Patch, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Patch, Delete, ValidationPipe } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { Role } from '@prisma/client';
@@ -9,7 +9,7 @@ export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
   @Post()
-  create(@Body() createRoleDto: CreateRoleDto): Promise<Role> {
+  create(@Body(new ValidationPipe()) createRoleDto: CreateRoleDto): Promise<Role> {
     return this.roleService.create(createRoleDto);
   }
 
@@ -26,7 +26,7 @@ export class RoleController {
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body() updateRoleDto: UpdateRoleDto,
+    @Body(new ValidationPipe()) updateRoleDto: UpdateRoleDto,
   ) {
     return this.roleService.update(Number(id), updateRoleDto);
   }
