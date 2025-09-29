@@ -17,7 +17,7 @@ export class RoleService {
     });
   }
 
-  async create(createRoleDto: CreateRoleDto) {console.log(createRoleDto);
+  async create(createRoleDto: CreateRoleDto){
     return await this.prisma.role.create({
       data: { ...createRoleDto },
     });
