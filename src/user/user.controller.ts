@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Request, ValidationPipe} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Request, ValidationPipe} from '@nestjs/common';
 import { Prisma, User, User as UserModel } from '@prisma/client';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -22,6 +22,11 @@ export class UserController {
     @Get('user')
     async getUsers(): Promise<UserModel[]> {
         return this.userService.findAll();
+    }
+
+    @Get('search')
+    async findByEmail(@Query('email') email: string) {
+      return this.userService.findByEmail(email);
     }
 
     @Get(':id')

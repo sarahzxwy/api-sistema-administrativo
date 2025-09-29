@@ -19,6 +19,16 @@ export class UserService {
     return await this.prisma.user.findMany();
   }
 
+async findByEmail(email: string) {
+     console.log(email);
+    return await this.prisma.user.findUnique({
+      where: { email },
+      include: {
+        role: true,
+      },
+    });
+  }
+  
   async findOne(id: number) {
     return await this.prisma.user.findUnique({
       where: { id },
