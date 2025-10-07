@@ -18,7 +18,11 @@ export class UserService {
   }
 
   async findAll() {
-    return await this.prisma.user.findMany();
+    return await this.prisma.user.findMany({
+      include: {
+        role: true,
+      },
+    });
   }
 
 async findByEmail(email: string) {
@@ -62,11 +66,15 @@ async findByEmail(email: string) {
     id: number,
     data: Prisma.UserUpdateInput,
   ): Promise<User> {
+    if (data.password) {
+      data.password = await bcrypt.hash(data.password as string, 10);
+    }
     return this.prisma.user.update({
       where: { id },
-      data, include: {
+      data,
+      include: {
         role: true,
-      }
+      },
     });
   }
 
