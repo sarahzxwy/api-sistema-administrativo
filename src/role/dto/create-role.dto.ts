@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString, Length } from "class-validator"
+import { IsBoolean, IsNotEmpty, IsOptional, IsString, Length } from "class-validator"
 
 export class CreateRoleDto {
   @Length(3)
@@ -9,4 +9,8 @@ export class CreateRoleDto {
   @IsString()
   @IsOptional()
   description?: string
+
+  @IsBoolean()
+  @IsOptional()
+  roleActive?: boolean;
 }
