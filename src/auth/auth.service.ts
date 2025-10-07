@@ -1,6 +1,5 @@
 import {
   Injectable,
-  NotFoundException,
   UnauthorizedException,
   Inject,
 } from '@nestjs/common';
@@ -17,17 +16,31 @@ export class AuthService {
   @Inject()
   private readonly jwtService: JwtService;
 
-  async signin(params: SignInDto): Promise<{ access_token: string }> {
+  async signin({ email, password }: SignInDto) {
     const user = await this.prisma.user.findUnique({
-      where: { email: params.email },
+      where: { email },
+      include: { role: true },
     });
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) throw new UnauthorizedException('User not found');
+    if (!user.active) throw new UnauthorizedException('User inactive');
 
-    const passwordMatch = await bcrypt.compare(params.password, user.password);
-    if (!passwordMatch) throw new UnauthorizedException('Invalid credentials');
+    const valid = await bcrypt.compare(password, user.password);
+    if (!valid) throw new UnauthorizedException('Invalid password');
 
-    const payload = { sub: user.id, email: user.email };
+    const payload = { sub: user.id, role: user.role.roleName };
+    const token = await this.jwtService.signAsync(payload, {
+      secret: process.env.SECRET_KEY,
+    });
 
-    return { access_token: await this.jwtService.signAsync(payload) };
+    return {
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role.roleName,
+        active: user.active,
+      },
+    };
   }
 }
