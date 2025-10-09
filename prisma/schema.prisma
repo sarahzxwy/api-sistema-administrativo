@@ -38,4 +38,5 @@ model Project {
   status      String   @default("Active") 
   createdAt   DateTime @default(now()) @db.Timestamp()
   updatedAt   DateTime @updatedAt 
+  completedAt DateTime? 
 }
