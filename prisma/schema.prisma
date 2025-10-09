@@ -30,3 +30,12 @@ model Role {
   updatedAt   DateTime @updatedAt
   users User[]
 }
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  status      String   @default("Active") 
+  createdAt   DateTime @default(now()) @db.Timestamp()
+  updatedAt   DateTime @updatedAt 
+}
