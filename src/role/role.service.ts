@@ -24,18 +24,19 @@ export class RoleService {
   }
   
   async findAll() {
-      return await this.prisma.role.findMany({
-        include: {
-          users: {
-            select: {
-              name: true,
-              email: true,
-            },
+    return await this.prisma.role.findMany({
+      include: {
+        users: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            active: true,
           },
         },
-      });
-    }
-
+      },
+    });
+  }
 
   async findOne(id: number) {
     return await this.prisma.role.findUnique({
