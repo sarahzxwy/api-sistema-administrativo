@@ -12,8 +12,18 @@ export class CreateProjectDto {
 
   @IsString()
   @IsOptional()
+  priority?: string;
+
+  @IsString()
+  @IsOptional()
   status?: string;
 
+  @IsDateString()
+  startAt: string;
+
+  @IsDateString()
+  dueAt: string;
+  
   @IsDateString()
   @IsOptional()
   completedAt?: Date;
