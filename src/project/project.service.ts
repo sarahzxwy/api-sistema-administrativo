@@ -80,7 +80,24 @@ export class ProjectService {
   }
 
   async remove(id: number) {
-    return await this.prisma.project.delete({
+    const tasks = await this.prisma.task.findMany({
+      where: { projectId: id },
+      select: { id: true },
+    });
+
+    const taskIds = tasks.map((task) => task.id);
+
+    if (taskIds.length > 0) {
+      await this.prisma.userTask.deleteMany({
+        where: { taskId: { in: taskIds } },
+      });
+    }
+
+    await this.prisma.task.deleteMany({
+      where: { projectId: id },
+    });
+
+    return this.prisma.project.delete({
       where: { id },
     });
   }
