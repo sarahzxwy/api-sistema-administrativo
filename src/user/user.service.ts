@@ -4,7 +4,6 @@ import { User, Prisma } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 
-
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
@@ -21,12 +20,12 @@ export class UserService {
     return await this.prisma.user.findMany({
       include: {
         role: true,
+        tasks: { include: { task: true } },
       },
     });
   }
 
-async findByEmail(email: string) {
-     console.log(email);
+  async findByEmail(email: string) {
     return await this.prisma.user.findUnique({
       where: { email },
       include: {
