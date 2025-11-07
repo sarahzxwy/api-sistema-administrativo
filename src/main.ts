@@ -8,6 +8,7 @@ async function bootstrap() {
   app.enableCors({
     origin: 'http://localhost:9000', 
     credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
   app.useGlobalPipes(new ValidationPipe({
@@ -19,6 +20,5 @@ async function bootstrap() {
   await app.listen(3000);
 
 }
-
 
 bootstrap();
